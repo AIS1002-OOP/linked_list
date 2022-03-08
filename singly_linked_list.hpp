@@ -38,9 +38,9 @@ namespace ais1002 {
             return current->data_;
         }
 
-        void addFirst(T data) { insert(0, data); }
+        void addFirst(const T &data) { insert(0, data); }
 
-        void addLast(T data) { insert(size_, data); }
+        void addLast(const T &data) { insert(size_, data); }
 
         void insert(size_t index, T data) {
             if (index > size_) {
