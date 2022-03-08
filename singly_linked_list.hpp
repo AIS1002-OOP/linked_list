@@ -38,6 +38,10 @@ namespace ais1002 {
             return current->data_;
         }
 
+        const T &operator[](size_t index) const {
+            return operator[](index);
+        }
+
         void addFirst(const T &data) { insert(0, data); }
 
         void addLast(const T &data) { insert(size_, data); }
