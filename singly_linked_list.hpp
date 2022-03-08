@@ -2,146 +2,140 @@
 #ifndef LISTS_SINGLY_LINKED_LIST_HPP
 #define LISTS_SINGLY_LINKED_LIST_HPP
 
-#include <utility>
 #include <exception>
-#include <iostream>
-#include <sstream>
+#include <ostream>
+#include <utility>
 
 namespace ais1002 {
 
-    template<typename T>
-    class node {
+template <typename T> class node {
 
-    public:
-        explicit node(const T &data) : data_(std::move(data)) {}
+public:
+  explicit node(const T &data) : data_(std::move(data)) {}
 
-        T data_;
-        node *next_ = nullptr;
-    };
+  T data_;
+  node *next_ = nullptr;
+};
 
-    template<typename T>
-    class singly_linked_list {
+template <typename T> class singly_linked_list {
 
-    public:
+public:
+  singly_linked_list() : size_(0) {}
 
-        singly_linked_list() : size_(0) {}
+  [[nodiscard]] bool empty() const { return size_ == 0; }
 
-        [[nodiscard]] bool empty() const {
-            return size_ == 0;
-        }
+  T &operator[](int index) {
+    if (index > size_)
+      throw std::runtime_error("Index out of bounds");
 
-        T get(unsigned int index) {
-            if (index > size_) throw std::runtime_error("Index out of bounds");
+    node<T> *current = head_;
+    for (int i = 0; i < index; i++) {
+      current = current->next_;
+    }
+    return current->data_;
+  }
 
-            node<T> *current = head_;
-            for (int i = 0; i < index; i++) {
-                current = current->next_;
-            }
-            return current->data_;
-        }
+  void addFirst(T data) { insert(0, data); }
 
-        T operator[](int index) {
-            return get(index);
-        }
+  void addLast(T data) { insert(size_, data); }
 
+  void insert(size_t index, T data) {
+    if (index > size_)
+      throw std::runtime_error("Index out of bounds");
 
-        void add(const T data) {
-            insert(size_, data);
-        }
+    node<T> *current = head_;
+    node<T> *prev = nullptr;
 
-        void insert(unsigned int index, const T &data) {
-            if (index > size_) throw std::runtime_error("Index out of bounds");
+    for (int i = 0; i < index; i++) {
+      prev = current;
+      current = current->next_;
+    }
 
-            node<T> *current = head_;
-            node<T> *prev = nullptr;
+    node<T> *insert = new node(data);
+    insert->next_ = current;
+    if (!prev) {
+      head_ = insert;
+    } else {
+      prev->next_ = insert;
+    }
 
-            for (int i = 0; i < index; i++) {
-                prev = current;
-                current = current->next_;
-            }
+    size_++;
+  }
 
-            node<T> *insert = new node(data);
-            insert->next_ = current;
-            if (!prev) {
-                head_ = insert;
-            } else {
-                prev->next_ = insert;
-            }
+  T remove(unsigned int index) {
+    if (index >= size_)
+      throw std::runtime_error("Index out of bounds");
 
-            size_++;
+    node<T> *current = head_;
+    node<T> *prev = nullptr;
 
-        }
+    for (int i = 0; i < index; i++) {
+      prev = current;
+      current = current->next_;
+    }
 
-        T remove(unsigned int index) {
-            if (index >= size_) throw std::runtime_error("Index out of bounds");
+    T data = current->data_;
+    if (!prev) {
+      head_ = current->next_;
+    } else {
+      prev->next_ = current->next_;
+    }
 
-            node<T> *current = head_;
-            node<T> *prev = nullptr;
+    delete current;
 
-            for (int i = 0; i < index; i++) {
-                prev = current;
-                current = current->next_;
-            }
+    size_--;
 
-            T data = current->data_;
-            if (!prev) {
-                head_ = current->next_;
-            } else {
-                prev->next_ = current->next_;
-            }
+    return data;
+  }
 
-            delete current;
+  [[nodiscard]] size_t size() const { return size_; }
 
-            size_--;
+  T removeFirst() {
+    if (empty())
+      throw std::runtime_error("List is empty..");
+    return remove(0);
+  }
 
-            return data;
+  T removeLast() {
+    if (empty())
+      throw std::runtime_error("List is empty..");
+    return remove(size_ - 1);
+  }
 
-        }
+  template <class E>
+  friend std::ostream &operator<<(std::ostream &,
+                                  const singly_linked_list<E> &);
 
-        [[nodiscard]] unsigned int size() const {
-            return size_;
-        }
+private:
+  node<T> *head_ = nullptr;
+  size_t size_;
+};
 
-        T removeFirst() {
-            if (empty()) throw std::runtime_error("List is empty..");
-            return remove(0);
-        }
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const singly_linked_list<T> &l) {
 
-        T removeLast() {
-            if (empty()) throw std::runtime_error("List is empty..");
-            return remove(size_ - 1);
-        }
+  if (l.empty())
+    os << "[]"
+       << "\n";
 
-        void print() {
+  os << "[";
 
-            if (empty()) std::cout << "[]" << std::endl;
+  node<T> *head = l.head_;
+  while (true) {
+    os << head->data_;
+    node<T> *next = head->next_;
+    if (!next) {
+      os << "]";
+      break;
+    } else {
+      os << ", ";
+      head = next;
+    }
+  }
 
-            std::stringstream ss;
-
-            ss << "[";
-
-            node<T> *head = head_;
-            while (true) {
-                ss << head->data_;
-                node<T> *next = head->next_;
-                if (!next) {
-                    ss << "]";
-                    break;
-                } else {
-                    ss << ", ";
-                    head = next;
-                }
-            }
-
-            std::cout << ss.str() << std::endl;
-
-        }
-
-    private:
-        node<T> *head_ = nullptr;
-        unsigned int size_;
-    };
-
+  return os;
 }
 
-#endif //LISTS_SINGLY_LINKED_LIST_HPP
+} // namespace ais1002
+
+#endif // LISTS_SINGLY_LINKED_LIST_HPP

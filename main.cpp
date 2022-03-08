@@ -1,24 +1,26 @@
-#include <iostream>
 #include "singly_linked_list.hpp"
+#include <iostream>
 
 int main() {
-    auto list = ais1002::singly_linked_list<std::string>();
+  auto list = ais1002::singly_linked_list<std::string>();
 
-    list.add("hello");
-    list.add("per");
-    list.add("nils");
+  list.addLast("Tore");
+  list.addLast("Per");
+  list.addLast("Conny");
 
-    list.print();
+  std::cout << list << std::endl;
 
-    std:: cout << list.removeFirst() << std::endl;
+  std::cout << list.removeFirst() << std::endl;
 
-    list.print();
+  std::cout << list << std::endl;
 
-    list.insert(0, "olav");
+  list.insert(0, "Olav");
 
-    list.insert(list.size(), "olav2");
+  list.insert(list.size()-1, "Birgitte");
 
-    list.print();
+  list.addFirst("Ole");
 
-    return 0;
+  std::cout << list << std::endl;
+
+  return 0;
 }
