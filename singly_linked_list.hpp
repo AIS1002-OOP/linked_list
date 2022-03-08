@@ -26,9 +26,10 @@ namespace ais1002 {
 
         [[nodiscard]] bool empty() const { return size_ == 0; }
 
-        T &operator[](int index) {
-            if (index > size_)
+        T &operator[](size_t index) {
+            if (index > size_) {
                 throw std::runtime_error("Index out of bounds");
+            }
 
             node<T> *current = head_;
             for (int i = 0; i < index; i++) {
@@ -42,8 +43,9 @@ namespace ais1002 {
         void addLast(T data) { insert(size_, data); }
 
         void insert(size_t index, T data) {
-            if (index > size_)
+            if (index > size_) {
                 throw std::runtime_error("Index out of bounds");
+            }
 
             node<T> *current = head_;
             node<T> *prev = nullptr;
@@ -64,9 +66,10 @@ namespace ais1002 {
             size_++;
         }
 
-        T remove(unsigned int index) {
-            if (index >= size_)
+        T remove(size_t index) {
+            if (index >= size_) {
                 throw std::runtime_error("Index out of bounds");
+            }
 
             node<T> *current = head_;
             node<T> *prev = nullptr;
@@ -87,26 +90,29 @@ namespace ais1002 {
 
             size_--;
 
-            return data;
+            return std::move(data);
         }
 
         [[nodiscard]] size_t size() const { return size_; }
 
         T removeFirst() {
-            if (empty())
+            if (empty()) {
                 throw std::runtime_error("List is empty..");
+            }
+
             return remove(0);
         }
 
         T removeLast() {
-            if (empty())
+            if (empty()) {
                 throw std::runtime_error("List is empty..");
+            }
+
             return remove(size_ - 1);
         }
 
         template<class E>
-        friend std::ostream &operator<<(std::ostream &,
-                                        const singly_linked_list<E> &);
+        friend std::ostream &operator<<(std::ostream &, const singly_linked_list<E> &);
 
     private:
         node<T> *head_ = nullptr;
@@ -116,9 +122,10 @@ namespace ais1002 {
     template<typename T>
     std::ostream &operator<<(std::ostream &os, const singly_linked_list<T> &l) {
 
-        if (l.empty())
+        if (l.empty()) {
             os << "[]"
                << "\n";
+        }
 
         os << "[";
 
